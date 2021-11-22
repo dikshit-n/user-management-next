@@ -1,21 +1,21 @@
 import { useRouter } from "next/dist/client/router";
 import { useActions } from "../../../hooks";
 import { setCookie } from "../../../lib";
-import {
-  CustomButton,
-  SaveIcon,
-  DeleteIcon,
-  ButtonGroup,
-  Typography,
-  Container,
-  Grid,
-  Paper,
-} from "../../ui";
-import { FC } from "../../../data";
+import { FC, ChangeEvent } from "../../../data";
+import { FullPageWrapper, Paper, CustomInput } from "../../ui";
+import { useState } from "react";
 
 export const LoginPageComponent: FC = () => {
   const { query, push } = useRouter();
   const { loginSuccessful } = useActions();
+
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
+
+  const changeHandler = ({
+    target: { value, name },
+  }: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    setCredentials((prev) => ({ ...prev, [name]: value }));
+  };
 
   const login = () => {
     const token =
@@ -30,37 +30,39 @@ export const LoginPageComponent: FC = () => {
       push("/");
     }
   };
-
+  console.log(credentials);
   return (
-    <Container maxWidth="xs" style={{ background: "black" }}>
-      <Typography variant="h2">Login Page</Typography>
-      <ButtonGroup>
-        <CustomButton
-          startIcon={<SaveIcon />}
-          variant="contained"
-          color="primary"
-        >
-          Save
-        </CustomButton>
-        <CustomButton
-          startIcon={<DeleteIcon />}
-          variant="contained"
-          color="secondary"
-        >
-          Discard
-        </CustomButton>
-      </ButtonGroup>
-      <Grid container spacing={2} justifyContent="center">
-        <Grid item lg xs={12} sm={6}>
-          <Paper style={{ height: 75, width: "100%" }} />
-        </Grid>
-        <Grid item xs={3}>
-          <Paper style={{ height: 75, width: "100%" }} />
-        </Grid>
-        <Grid item xs={3}>
-          <Paper style={{ height: 75, width: "100%" }} />
-        </Grid>
-      </Grid>
-    </Container>
+    <FullPageWrapper
+      display="grid"
+      alignContent="center"
+      className="fit-background-image"
+      sx={{
+        backgroundImage: `url("https://www.photohdx.com/images/2016/09/blue-pattern-background.jpg")`,
+      }}
+    >
+      <Paper
+        sx={{
+          width: "95%",
+          maxWidth: 500,
+          mx: "auto",
+          p: 2,
+        }}
+        elevation={3}
+      >
+        <CustomInput
+          label="Email"
+          name="email"
+          value={credentials.email}
+          onChange={changeHandler}
+        />
+        <br />
+        <CustomInput
+          label="Password"
+          name="password"
+          value={credentials.password}
+          onChange={changeHandler}
+        />
+      </Paper>
+    </FullPageWrapper>
   );
 };

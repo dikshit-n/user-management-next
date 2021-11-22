@@ -23,3 +23,8 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.fit-background-image {
+  background-position: center;
+  background-size: cover;
+}
