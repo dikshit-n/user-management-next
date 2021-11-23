@@ -1,10 +1,15 @@
 import { axiosInstance } from "./axios-instance";
 import Papa from "papaparse";
 import { getDateCollapsed } from "./date-utils";
-import Compress from "compress.js";
+import compress from "browser-image-compression";
+import {
+  COMPRESS_FILE_OPTIONS,
+  EXPORT_ZIP_OPTIONS,
+  PARSE_CSV_OPTIONS,
+} from "../data";
 const JsZip = require("jszip");
 
-export const imageUrlToBase64 = async (url) => {
+export const imageUrlToBase64 = async (url: string) => {
   try {
     if (url && url.startsWith("http")) {
       let image = await axiosInstance.post("/services/image_to_base64", {
@@ -18,29 +23,37 @@ export const imageUrlToBase64 = async (url) => {
   }
 };
 
-export const compressFile = async (files, options = {}) => {
-  let compress = new Compress();
+export const compressFile = async (
+  file: File,
+  options: COMPRESS_FILE_OPTIONS = {}
+) => {
   let data = null;
   try {
-    data = await compress.compress(files, {
-      size: options.size ? options.size : 2, // the max size in MB, defaults to 2MB
-      quality: options.quality ? options.quality : 0.75, // the quality of the image, max is 1,
-      maxWidth: 1920, // the max width of the output image, defaults to 1920px
-      maxHeight: 1920, // the max height of the output image, defaults to 1920px
-      resize: options.resize !== undefined ? options.resize : false, // defaults to true, set false if you do not want to resize the image width and height
+    data = await compress(file, {
+      maxSizeMB: 2, // the max size in MB, defaults to 2MB
+      initialQuality: 0.75, // the quality of the image, max is 1,
+      maxWidthOrHeight: 1920, // the max width/height of the output image, defaults to 1920px
+      ...options,
     });
   } catch (err) {
     console.log(err);
     data = null;
   }
-  data = data.map((el) => ({
-    ...el,
-    dataWithPrefix: el.prefix + el.data,
-  }));
+  // data = data.map((el) => ({
+  //   ...el,
+  //   dataWithPrefix: el.prefix + el.data,
+  // }));
   return data;
 };
 
-export const downloadLink = ({ link, name }) => {
+export const downloadLink = ({
+  link,
+  name,
+}: {
+  link: string;
+  name?: string | null;
+}) => {
+  name = name || "download";
   let aTag = document.createElement("a");
   aTag.href = link;
   aTag.target = "_blank";
@@ -48,7 +61,7 @@ export const downloadLink = ({ link, name }) => {
   aTag.click();
 };
 
-export async function getBase64(file) {
+export async function getBase64(file: File) {
   return new Promise((resolve, reject) => {
     var reader = new FileReader();
     reader.readAsDataURL(file);
@@ -64,15 +77,15 @@ export async function getBase64(file) {
 }
 
 export async function parseCSVFile(
-  file,
+  file: File,
   {
     header = true,
-    preview = false,
+    preview = 0,
     dynamicTyping = true,
     comments,
     skipEmptyLines = true,
-    transformHeader = (header) => header,
-  } = {}
+    transformHeader = (header: any) => header,
+  }: PARSE_CSV_OPTIONS = {}
 ) {
   return new Promise((resolve, reject) => {
     Papa.parse(file, {
@@ -96,12 +109,12 @@ export const exportZip = async ({
   fileName = "",
   download = true,
   returnTypeBlob = true, // whether to return the zipped file in a blob format or the same format as we get in the params (so that you can use the returned data in dynamic ways)
-}) =>
+}: EXPORT_ZIP_OPTIONS = {}) =>
   new Promise(async (resolve, reject) => {
     try {
       const Zip = new JsZip();
       let folder = Zip.folder(fileName);
-      files.forEach((el) => {
+      files.forEach((el: any) => {
         folder.file(el.fileName, el.base64);
       });
       let res = await Zip.generateAsync({ type: "blob" });
@@ -111,7 +124,7 @@ export const exportZip = async ({
           link: blobUrl,
           name: `${fileName} - createdOn_ ${getDateCollapsed(new Date())}.zip`,
         });
-        resolve();
+        resolve(null);
       } else resolve(returnTypeBlob ? blobUrl : files);
     } catch (err) {
       console.log(err);
@@ -126,7 +139,9 @@ export const exportCSV = (
   let newDownloadData = [
     headings,
     // convert undefined / null values to empty string
-    ...rows.map((el) => [...el.map((ele) => (ele === 0 ? "0" : ele))]),
+    ...rows.map((el: any) => [
+      ...el.map((ele: any) => (ele === 0 ? "0" : ele)),
+    ]),
   ];
   let csvContent = prefix
     ? "data:text/csv;charset=utf-8," +

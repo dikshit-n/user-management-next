@@ -1,22 +1,26 @@
 import React from "react";
-import Select from "react-select";
 import {
   accessValueByString,
   convertDropDownObject,
   ignoreEmptyObject,
 } from "../../../Utility/ObjectUtils";
+import { Select, MenuItem, Checkbox, ListItemText } from "../../m-ui";
 
-export const ReactSelect = ({
-  fieldProps = {},
+export const MaterialSelect = ({
   formik,
   options = [],
-  className = "",
   labelAccessor = "label",
   valueAccessor = "value",
   isString = false,
   valueIsString = false,
   optionIsString = false,
   retriveOtherKeys = false,
+  name,
+  value,
+  error,
+  helperText,
+  InputProps,
+  ...rest
 }) => {
   // little configuration
   if (isString) {
@@ -28,10 +32,10 @@ export const ReactSelect = ({
   // ---------------------- //
 
   let selectedOption = ignoreEmptyObject(
-    accessValueByString(formik.values, fieldProps.name)
+    accessValueByString(formik.values, name)
   );
 
-  if (fieldProps.isMulti)
+  if (rest.multiple)
     selectedOption = (selectedOption || []).map((option) =>
       convertDropDownObject({
         value: option,
@@ -49,7 +53,7 @@ export const ReactSelect = ({
         labelAccessor,
         isString: isString || valueIsString,
         retriveOtherKeys,
-      }) || (fieldProps.isMulti ? [] : null);
+      }) || (rest.multiple ? [] : null);
 
   options = (options || []).map((option) =>
     convertDropDownObject({
@@ -62,7 +66,7 @@ export const ReactSelect = ({
   );
 
   const onChange = (option) => {
-    let value = fieldProps.isMulti
+    let value = rest.multiple
       ? (option || []).map((option) =>
           convertDropDownObject({
             value: option,
@@ -81,36 +85,48 @@ export const ReactSelect = ({
           isReverse: true,
           retriveOtherKeys,
         });
-    formik.setFieldValue(fieldProps.name, value);
-    if (fieldProps.onChange) fieldProps.onChange(value);
+    formik.setFieldValue(name, value);
+    if (rest.onChange) rest.onChange(value);
   };
 
   const getValue = () => {
     if (options) {
-      return fieldProps.isMulti
-        ? options.filter((option) =>
-            selectedOption.find((el) => option.value === el.value)
-          )
+      return rest.multiple
+        ? options
+            .filter((option) =>
+              selectedOption.find((el) => option.value === el.value)
+            )
+            .map((el) => el.value)
         : selectedOption
-        ? options.find((option) => option.value === selectedOption.value)
+        ? options.find((option) => option.value === selectedOption.value)?.value
         : null;
     } else {
-      return fieldProps.isMulti ? [] : null;
+      return rest.multiple ? [] : null;
     }
   };
+  const selectedValue = getValue();
 
   return (
-    <Select
-      closeMenuOnSelect={!fieldProps.isMulti}
-      {...fieldProps}
-      name={fieldProps.name}
-      value={getValue()}
-      onChange={onChange}
-      options={options}
-      isMulti={fieldProps.isMulti}
-      className={className}
-      classNamePrefix="react-select"
-    />
+    <Select {...rest} name={name} value={selectedValue} onChange={onChange}>
+      {options.map((el, index) => (
+        <MenuItem key={index} value={el.value}>
+          {rest.multiple ? (
+            <>
+              <Checkbox
+                checked={
+                  selectedValue
+                    ? selectedValue.find((ele) => ele.value === el.value)
+                    : false
+                }
+              />
+              <ListItemText primary={el.label} />
+            </>
+          ) : (
+            el.label
+          )}
+        </MenuItem>
+      ))}
+    </Select>
   );
 };
 

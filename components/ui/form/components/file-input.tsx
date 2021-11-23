@@ -12,7 +12,7 @@ const isImageFile = (name: string) =>
     name.toLowerCase().endsWith(el)
   );
 
-const FileInput = ({
+export const FileInput = ({
   onChange = (e: any) => null,
   value = null,
   supportedFormats = ["png", "jpg", "jpeg", "jfif"],
@@ -39,14 +39,14 @@ const FileInput = ({
         if (convertToBase64) {
           // compress, if it is an image file
           if (isImageFile(chosenFile.name)) {
-            let data = await compressFile([chosenFile], { size: 0.3 });
-            setFile(data[0].dataWithPrefix);
-            onChange(data[0].dataWithPrefix);
+            let data = await compressFile(chosenFile, { maxSizeMB: 0.3 });
+            setFile(data);
+            onChange(data);
           } else {
             // else don't compress
             let data = await getBase64(chosenFile);
             setFile(data);
-            onChange(data[0].dataWithPrefix);
+            onChange(data);
           }
         } else {
           setFile(chosenFile);
@@ -132,5 +132,3 @@ const FileInput = ({
     </>
   );
 };
-
-export default FileInput;

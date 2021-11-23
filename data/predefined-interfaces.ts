@@ -29,3 +29,9 @@ export type {
 
 // react-phone-input-2
 export type { PhoneInputProps } from "react-phone-input-2";
+
+// papaparse
+export type { ParseLocalConfig } from "papaparse";
+
+// react-number-format
+export type { NumberFormatPropsBase } from "react-number-format";

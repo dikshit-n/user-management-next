@@ -6,7 +6,7 @@ import {
 } from "../../predefined-interfaces";
 
 export interface CUSTOM_INPUT_PROPS extends InputProps {
-  containerProps?: FormControlProps;
+  inputContainerProps?: FormControlProps;
   labelProps?: InputLabelProps;
   label?: string | number | ReactElement | null;
 }
