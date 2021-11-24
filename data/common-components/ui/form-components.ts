@@ -1,3 +1,4 @@
+import React from "react";
 import { ChangeEvent } from "../../predefined-interfaces";
 
 interface FIELD_PROPS {
@@ -15,4 +16,5 @@ export interface FILE_INPUT_PROPS {
   supportedFormats?: string[] | null;
   fieldProps?: FIELD_PROPS;
   name?: string | null;
+  disabled?: boolean | null;
 }

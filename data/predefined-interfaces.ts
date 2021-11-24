@@ -14,18 +14,18 @@ export type {
 } from "react";
 
 // material-ui
-export type {
-  ButtonProps,
-  CheckboxProps,
-  RadioProps,
-  RadioGroupProps,
-  FormControlProps,
-  FormControlLabelProps,
-  InputLabelProps,
-  CardProps,
-  BoxProps,
-  InputProps,
-} from "@mui/material";
+export type { ButtonProps } from "@mui/material/Button/Button";
+export type { CheckboxProps } from "@mui/material/Checkbox/Checkbox";
+export type { RadioProps } from "@mui/material/Radio/Radio";
+export type { RadioGroupProps } from "@mui/material/RadioGroup/RadioGroup";
+export type { FormControlProps } from "@mui/material/FormControl/FormControl";
+export type { FormControlLabelProps } from "@mui/material/FormControlLabel/FormControlLabel";
+export type { InputLabelProps } from "@mui/material/InputLabel/InputLabel";
+export type { CardProps } from "@mui/material/Card/Card";
+export type { BoxProps } from "@mui/material/Box/Box";
+export type { InputProps } from "@mui/material/Input/Input";
+
+export type { MobileDatePickerProps } from "@mui/lab/MobileDatePicker/MobileDatePicker";
 
 // react-phone-input-2
 export type { PhoneInputProps } from "react-phone-input-2";

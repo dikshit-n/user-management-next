@@ -1,33 +1,33 @@
 import { useState } from "react";
-import {
-  Input,
-  FormGroup,
-  InputGroupAddon,
-  InputGroupText,
-  Label,
-} from "reactstrap";
 import randomId from "uniqid";
-import ReactDatetime from "react-datetime";
 import RecursiveContainer from "./recursive-container";
 import { isRequiredField } from "../../Utility/validation";
 import { accessValueByString } from "../../Utility/ObjectUtils";
 import { filterNumbers } from "../../Utility/numberUtils";
-import Avatar from "../../UI/Avatar";
+import Avatar from "../avatar";
 import RadioMultiple from "./components/radio-multiple";
-import ColorPicker from "../../UI/ColorPicker/ColorPicker";
-import { FileInput } from "./components/file-input";
+// import ColorPicker from "../../UI/ColorPicker/ColorPicker";
+import { CustomRadio } from "../custom-radio";
+import { MaterialSelect } from "./components/material-select";
+import { CustomNumberInput } from "./components/custom-number-input";
+import { CustomPhoneNumberInput } from "./components/custom-phone-number-input";
+import { CustomFileInput } from "./components/custom-file-input";
 import {
   TextField,
   InputAdornment,
   IconButton,
   VisibilityIcon,
   VisibilityOffIcon,
+  FormLabel,
+  FormControlLabel,
+  FormControl,
+  FormGroup,
+  MobileDatePicker,
+  DateTimePicker,
+  TimePicker,
+  Checkbox,
+  FormControlLabel,
 } from "../m-ui";
-import { isDateAfter, isDateBefore } from "../../Utility/dateUtils";
-import { CustomRadio } from "../custom-radio";
-import { MaterialSelect } from "./components/material-select";
-import { CustomNumberInput } from "./components/custom-number-input";
-import { CustomPhoneNumberInput } from "./components/custom-phone-number-input";
 
 const Field = ({
   formik,
@@ -157,7 +157,7 @@ const Field = ({
             .filter((el) => el)
             .join(" ")}
         >
-          <Label htmlFor={inputElementProps.id || id}>
+          {/* <Label htmlFor={inputElementProps.id || id}>
             {label}
             {isRequired && <span className="required-indicator">*</span>}
           </Label>
@@ -183,7 +183,7 @@ const Field = ({
               </InputGroupAddon>
             )}
           </FormGroup>
-          {error && touched && <div className="form-input-error">{error}</div>}
+          {error && touched && <div className="form-input-error">{error}</div>} */}
         </div>
       );
     case "number":
@@ -256,27 +256,30 @@ const Field = ({
       );
     case "file":
       return (
-        <div
-          className={["form-input-container-with-label", containerProps.label]
-            .filter((el) => el)
-            .join(" ")}
-        >
-          <Label htmlFor={inputElementProps.id || id}>
-            {label}
-            {isRequired && <span className="required-indicator">*</span>}
-          </Label>
-          <FileInput
-            {...rest}
-            name={name}
-            inputElementProps={inputElementProps}
-            onChange={(file) => {
-              if (inputElementProps.onChange) inputElementProps.onChange(file);
-              formik.setFieldValue(name, file);
-            }}
-            value={value}
-          />
-          {error && touched && <div className="form-input-error">{error}</div>}
-        </div>
+        <TextField
+          {...rest}
+          // fullWidth
+          name={name}
+          error={error && touched}
+          value={value}
+          helperText={error || rest.helperText}
+          onChange={(file) => {
+            if (rest.onChange) rest.onChange(file);
+            formik.setFieldValue(name, file);
+          }}
+          InputProps={{
+            [`${addonPosition}Adornment`]: addon && (
+              <InputAdornment position={addonPosition}>
+                {addon.component}
+              </InputAdornment>
+            ),
+            // CUSTOM_NUMBER_FORMAT_PROPS
+            inputComponent: (fileInputProps) => (
+              <CustomFileInput {...fileInputProps} {...specialInputProps} />
+            ),
+            ...rest.InputProps,
+          }}
+        />
       );
     case "array":
       return children.length > 0 ? (
@@ -292,90 +295,141 @@ const Field = ({
       return component;
     case "date":
       return (
-        <div
-          className={[containerClassName, "form-input-container"].join(" ")}
-          style={{ marginBottom: 10 }}
-        >
-          <Label>
-            {label}
-            {isRequired && <span className="required-indicator">*</span>}
-          </Label>
-          <ReactDatetime
-            timeFormat={false}
-            value={value}
-            closeOnSelect
-            dateFormat="DD/MM/YYYY"
-            {...inputElementProps}
-            isValidDate={(currentDate) => {
-              currentDate = new Date(currentDate);
-              if (
-                currentDate &&
-                (inputElementProps.maxDate || inputElementProps.minDate)
-              ) {
-                if (inputElementProps.maxDate)
-                  return isDateBefore({
-                    date: currentDate,
-                    maxDate: inputElementProps.maxDate,
-                  });
-                if (inputElementProps.minDate)
-                  return isDateAfter({
-                    date: currentDate,
-                    minDate: inputElementProps.minDate,
-                  });
-              }
-              return true;
-            }}
-            name={name}
-            onChange={(date) => {
-              if (inputElementProps.onChange) inputElementProps.onChange(date);
-              formik.setFieldValue(name, date);
-            }}
-            inputProps={{
-              className: "form-control",
-              placeholder: inputElementProps.placeholder || "Choose Date",
-              disabled: inputElementProps?.disabled,
-              ...inputElementProps.inputProps,
-            }}
-          />
-          {error && touched && <div className="form-input-error">{error}</div>}
-        </div>
-      );
-    case "checkbox":
-      return (
-        <FormGroup className={containerClassName} check>
-          <Label check>
-            <Input
-              defaultValue=""
-              type="checkbox"
-              checked={value}
-              onChange={(event) => {
-                if (inputElementProps.onChange)
-                  inputElementProps.onChange(event);
-                formik.setFieldValue(name, !value);
-              }}
+        <MobileDatePicker
+          {...specialInputProps}
+          value={value}
+          onChange={(date) => {
+            if (rest.onChange) rest.onChange(date);
+            formik.setFieldValue(name, date);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              {...rest}
+              onChange={undefined}
+              helperText={error || rest.helperText}
             />
-            {label}
-            {isRequired && <span className="required-indicator">*</span>}
-            <span className="form-check-sign" />
-          </Label>
-        </FormGroup>
+          )}
+        />
       );
-    case "radio":
+    case "time":
+      return (
+        <TimePicker
+          {...specialInputProps}
+          value={value}
+          onChange={(date) => {
+            if (rest.onChange) rest.onChange(date);
+            formik.setFieldValue(name, date);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...rest}
+              onChange={undefined}
+              {...params}
+              helperText={error || rest.helperText}
+            />
+          )}
+        />
+      );
+    case "date-time":
+      return (
+        <DateTimePicker
+          {...specialInputProps}
+          value={value}
+          onChange={(date) => {
+            if (rest.onChange) rest.onChange(date);
+            formik.setFieldValue(name, date);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...rest}
+              onChange={undefined}
+              {...params}
+              helperText={error || rest.helperText}
+            />
+          )}
+        />
+      );
+    case "checkbox": //
+      return (
+        <FormControl
+          required
+          error={error && touched}
+          component="fieldset"
+          sx={{ m: 3 }}
+          variant="standard"
+          {...restInputCustomizationProps.formControlProps}
+        >
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={value}
+                onChange={(event) => {
+                  if (rest.onChange) rest.onChange(event);
+                  formik.setFieldValue(name, !value);
+                }}
+                name={name}
+                value={value}
+                {...rest}
+              />
+            }
+            {...restInputCustomizationProps.formControlLabelProps}
+            defaultValue=""
+            onChange={undefined}
+          />
+        </FormControl>
+      );
+    case "checkbox-multiple": //
+      return (
+        <FormControl
+          required
+          error={error && touched}
+          component="fieldset"
+          sx={{ m: 3 }}
+          variant="standard"
+          {...restInputCustomizationProps.formControlProps}
+        >
+          <FormLabel
+            component="legend"
+            {...restInputCustomizationProps.formLabelProps}
+          >
+            {rest.label}
+          </FormLabel>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={value}
+                  onChange={(event) => {
+                    if (rest.onChange) rest.onChange(event);
+                    formik.setFieldValue(name, !value);
+                  }}
+                  name={name}
+                  value={value}
+                  {...rest}
+                />
+              }
+              {...restInputCustomizationProps.formControlLabelProps}
+              defaultValue=""
+              onChange={undefined}
+            />
+          </FormGroup>
+        </FormControl>
+      );
+    case "radio": //
       return (
         <>
           <CustomRadio
             defaultValue=""
             checked={value}
             onChange={(event) => {
-              if (inputElementProps.onChange) inputElementProps.onChange(event);
+              if (rest.onChange) rest.onChange(event);
               formik.setFieldValue(name, !value);
             }}
           />
-          {isRequired && <span className="required-indicator">*</span>}
-          <span className="form-check-sign" />
         </>
       );
-    case "radio-multiple":
+    case "radio-multiple": //
       return (
         <>
           <RadioMultiple
@@ -393,26 +447,21 @@ const Field = ({
     case "image":
       return (
         <div className={containerProps.label}>
-          <Label>
+          <FormLabel required={isRequired} error={error && touched}>
             {label}
-            {isRequired && <span className="required-indicator">*</span>}
-          </Label>
-          <div className={containerClassName}>
-            <Avatar
-              initialImage={value}
-              {...inputElementProps}
-              onEditEnd={(image) => {
-                if (inputElementProps && inputElementProps.onChange)
-                  inputElementProps.onChange(image);
-                formik.setFieldValue(name, image);
-              }}
-              deleteImage={() => {
-                if (inputElementProps && inputElementProps.onChange)
-                  inputElementProps.onChange(null);
-                formik.setFieldValue(name, null);
-              }}
-            />
-          </div>
+          </FormLabel>
+          <Avatar
+            initialImage={value}
+            {...rest}
+            onEditEnd={(image) => {
+              if (rest && rest.onChange) rest.onChange(image);
+              formik.setFieldValue(name, image);
+            }}
+            deleteImage={() => {
+              if (rest && rest.onChange) rest.onChange(null);
+              formik.setFieldValue(name, null);
+            }}
+          />
           {error && touched && <div className="form-input-error">{error}</div>}
         </div>
       );
@@ -420,42 +469,23 @@ const Field = ({
       return component;
     default:
       return (
-        <div
-          className={["form-input-container-with-label", containerProps.label]
-            .filter((el) => el)
-            .join(" ")}
-        >
-          <Label htmlFor={inputElementProps.id || id}>
-            {label}
-            {isRequired && <span className="required-indicator">*</span>}
-          </Label>
-          <FormGroup
-            className={[containerClassName, "form-input-container"]
-              .filter((el) => el)
-              .join(" ")}
-          >
-            {addon && addonType === "prepend" && (
-              <InputGroupAddon {...addonProps} addonType={addonType}>
-                <InputGroupText>{addon}</InputGroupText>
-              </InputGroupAddon>
-            )}
-            <Input
-              {...inputElementProps}
-              value={value}
-              type={type || "text"}
-              name={name}
-              onChange={formik.handleChange}
-              id={inputElementProps.id || id}
-            />
-            {addon && addonType === "append" && (
-              <InputGroupAddon {...addonProps} addonType={addonType}>
-                <InputGroupText>{addon}</InputGroupText>
-              </InputGroupAddon>
-            )}
-          </FormGroup>
-
-          {error && touched && <div className="form-input-error">{error}</div>}
-        </div>
+        <TextField
+          {...rest}
+          type={type || "text"}
+          // fullWidth
+          name={name}
+          error={error && touched}
+          helperText={error || rest.helperText}
+          onChange={formik.handleChange}
+          InputProps={{
+            [`${addonPosition}Adornment`]: addon && (
+              <InputAdornment position={addonPosition}>
+                {addon.component}
+              </InputAdornment>
+            ),
+            ...rest.InputProps,
+          }}
+        />
       );
   }
 };
