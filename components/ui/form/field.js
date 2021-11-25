@@ -1,17 +1,21 @@
 import { useState } from "react";
 import randomId from "uniqid";
 import RecursiveContainer from "./recursive-container";
-import { isRequiredField } from "../../Utility/validation";
-import { accessValueByString } from "../../Utility/ObjectUtils";
-import { filterNumbers } from "../../Utility/numberUtils";
+import {
+  isRequiredField,
+  accessValueByString,
+  filterNumbers,
+} from "../../../lib";
 import Avatar from "../avatar";
 import RadioMultiple from "./components/radio-multiple";
 // import ColorPicker from "../../UI/ColorPicker/ColorPicker";
+import {
+  MaterialSelect,
+  CustomNumberInput,
+  CustomPhoneNumberInput,
+  CustomFileInput,
+} from "./components";
 import { CustomRadio } from "../custom-radio";
-import { MaterialSelect } from "./components/material-select";
-import { CustomNumberInput } from "./components/custom-number-input";
-import { CustomPhoneNumberInput } from "./components/custom-phone-number-input";
-import { CustomFileInput } from "./components/custom-file-input";
 import {
   TextField,
   InputAdornment,
@@ -21,15 +25,13 @@ import {
   FormLabel,
   FormControlLabel,
   FormControl,
-  FormGroup,
   MobileDatePicker,
   DateTimePicker,
   TimePicker,
   Checkbox,
-  FormControlLabel,
 } from "../m-ui";
 
-const Field = ({
+export const Field = ({
   formik,
   type = "",
   name = "",
@@ -350,7 +352,7 @@ const Field = ({
           )}
         />
       );
-    case "checkbox": //
+    case "checkbox":
       return (
         <FormControl
           required
@@ -379,43 +381,6 @@ const Field = ({
           />
         </FormControl>
       );
-    case "checkbox-multiple": //
-      return (
-        <FormControl
-          required
-          error={error && touched}
-          component="fieldset"
-          sx={{ m: 3 }}
-          variant="standard"
-          {...restInputCustomizationProps.formControlProps}
-        >
-          <FormLabel
-            component="legend"
-            {...restInputCustomizationProps.formLabelProps}
-          >
-            {rest.label}
-          </FormLabel>
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={value}
-                  onChange={(event) => {
-                    if (rest.onChange) rest.onChange(event);
-                    formik.setFieldValue(name, !value);
-                  }}
-                  name={name}
-                  value={value}
-                  {...rest}
-                />
-              }
-              {...restInputCustomizationProps.formControlLabelProps}
-              defaultValue=""
-              onChange={undefined}
-            />
-          </FormGroup>
-        </FormControl>
-      );
     case "radio": //
       return (
         <>
@@ -426,6 +391,7 @@ const Field = ({
               if (rest.onChange) rest.onChange(event);
               formik.setFieldValue(name, !value);
             }}
+            containerProps={restInputCustomizationProps.formControlLabelProps}
           />
         </>
       );
@@ -434,7 +400,7 @@ const Field = ({
         <>
           <RadioMultiple
             onChange={(event) => {
-              if (inputElementProps.onChange) inputElementProps.onChange(event);
+              if (rest.onChange) rest.onChange(event);
               formik.setFieldValue(name, event.target.value);
             }}
             label={label}
@@ -489,5 +455,3 @@ const Field = ({
       );
   }
 };
-
-export default Field;

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import AvatarEditor from "react-avatar-editor";
-import AsyncButton from "../../AsyncButton";
+import { CustomButton } from "../../custom-button";
 import { useRef } from "react";
 import { useEffect } from "react";
-import { imageUrlToBase64 } from "../../../Utility/fileUtils";
-import { Spinner } from "reactstrap";
-import { DefaultImage } from "../../../exports";
+import { imageUrlToBase64 } from "../../../../lib";
+import { DefaultImage } from "../../../../data";
+import { Progress } from "../../m-ui";
 
 const ImageEditor = ({
   image = null,
@@ -88,9 +88,9 @@ const ImageEditor = ({
         style={{ width: "100%", maxWidth: 500, margin: "auto" }}
       >
         <div />
-        <AsyncButton onClick={close} color="danger">
+        <CustomButton onClick={close} color="danger">
           <i className="nc-icon nc-simple-remove" />
-        </AsyncButton>
+        </CustomButton>
       </div>
       <div className="image-editor-step">
         {processing ? (
@@ -98,7 +98,7 @@ const ImageEditor = ({
             style={{ width: "100%", height: 200 }}
             className="d-flex flex-center"
           >
-            <Spinner />
+            <Progress />
           </div>
         ) : (
           <>
@@ -128,20 +128,20 @@ const ImageEditor = ({
                 </>
               ))}
               <div className="d-flex flex-wrap" style={{ gap: 10 }}>
-                <AsyncButton
+                <CustomButton
                   onClick={getCroppedImage}
                   color="success"
                   size="sm"
                 >
                   Done
-                </AsyncButton>
-                <AsyncButton
+                </CustomButton>
+                <CustomButton
                   onClick={() => previousStep()}
                   color="danger"
                   size="sm"
                 >
                   Change Image
-                </AsyncButton>
+                </CustomButton>
               </div>
             </div>
           </>

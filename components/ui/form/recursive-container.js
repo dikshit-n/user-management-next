@@ -1,7 +1,7 @@
 import React from "react";
 import Field from "./field";
 
-const RecursiveContainer = ({
+export const RecursiveContainer = ({
   config,
   formik,
   validationSchema,
@@ -34,5 +34,3 @@ const RecursiveContainer = ({
     recursiveContainer
   );
 };
-
-export default RecursiveContainer;

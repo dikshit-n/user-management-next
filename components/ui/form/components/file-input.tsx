@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { compressFile, downloadLink, getBase64 } from "../../../../lib";
+import {
+  compressFile,
+  downloadLink,
+  getBase64,
+  forwardRef,
+} from "../../../../lib";
 import { FILE_INPUT_PROPS } from "../../../../data";
 import { CustomButton } from "../../../../components";
 
@@ -12,7 +17,7 @@ const isImageFile = (name: string) =>
     name.toLowerCase().endsWith(el)
   );
 
-export const FileInput = React.forwardRef<HTMLElement, FILE_INPUT_PROPS>(
+export const FileInput = forwardRef<HTMLElement, FILE_INPUT_PROPS>(
   function FileInputElement(
     {
       onChange = (e: any) => null,

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { compressFile } from "../../../Utility/fileUtils";
+import { compressFile } from "../../../../lib";
 import { useDropzone } from "react-dropzone";
-import AsyncButton from "../../AsyncButton";
+import { CustomButton } from "../../custom-button";
 
 const supportedFormats = ["jpg", "png", "jfif", "jpeg"];
 const checkValidity = (name) =>
@@ -38,13 +38,13 @@ const ChooseImage = ({ image = null, setImage, nextStep, close }) => {
         <div />
         <div className="d-flex" style={{ gap: 10 }}>
           {image && (
-            <AsyncButton onClick={() => nextStep()} className="my-bg-green">
+            <CustomButton onClick={() => nextStep()} color="success">
               Continue Editing
-            </AsyncButton>
+            </CustomButton>
           )}
-          <AsyncButton onClick={close} color="danger">
+          <CustomButton onClick={close} color="danger">
             <i className="nc-icon nc-simple-remove" />
-          </AsyncButton>
+          </CustomButton>
         </div>
       </div>
       <div

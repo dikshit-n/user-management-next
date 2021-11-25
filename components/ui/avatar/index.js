@@ -1,8 +1,8 @@
-import { DefaultImage } from "exports";
+import { DefaultImage } from "../../../data";
 import React, { useEffect } from "react";
 import { useState } from "react";
 import StepWizard from "react-step-wizard";
-import { Modal } from "reactstrap";
+import { Modal } from "../m-ui";
 import ChooseImage from "./components/choose-image";
 import ImageEditor from "./components/image-editor";
 

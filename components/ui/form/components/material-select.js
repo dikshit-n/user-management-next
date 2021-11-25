@@ -3,7 +3,7 @@ import {
   accessValueByString,
   convertDropDownObject,
   ignoreEmptyObject,
-} from "../../../Utility/ObjectUtils";
+} from "../../../../lib";
 import { Select, MenuItem, Checkbox, ListItemText } from "../../m-ui";
 
 export const MaterialSelect = ({

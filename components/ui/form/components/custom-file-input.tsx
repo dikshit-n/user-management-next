@@ -1,8 +1,9 @@
 import React from "react";
 import { FILE_INPUT_PROPS } from "../../../../data";
 import { FileInput } from "./file-input";
+import { forwardRef } from "../../../../lib";
 
-export const CustomFileInput = React.forwardRef<HTMLElement, FILE_INPUT_PROPS>(
+export const CustomFileInput = forwardRef<HTMLElement, FILE_INPUT_PROPS>(
   function NumberFormatCustom(props, ref) {
     const { onChange, ...rest } = props;
     return (

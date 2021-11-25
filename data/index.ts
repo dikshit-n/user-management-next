@@ -7,3 +7,4 @@ export * from "./custom-error";
 export * from "./rbac-setup";
 export * from "./predefined-interfaces";
 export * from "./file-utils";
+export * from "./static-files";
