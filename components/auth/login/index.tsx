@@ -30,7 +30,6 @@ export const LoginPageComponent: FC = () => {
       push("/");
     }
   };
-  console.log(credentials);
   return (
     <FullPageWrapper
       display="grid"

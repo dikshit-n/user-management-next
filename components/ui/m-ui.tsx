@@ -29,6 +29,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Progress from "@mui/material/CircularProgress";
 import Modal from "@mui/material/Modal";
+import FormHelperText from "@mui/material/FormHelperText";
 import MobileDatePicker from "@mui/lab/MobileDatePicker";
 import DateTimePicker from "@mui/lab/DateTimePicker";
 import TimePicker from "@mui/lab/TimePicker";
@@ -70,4 +71,5 @@ export {
   TimePicker,
   Progress,
   Modal,
+  FormHelperText,
 };

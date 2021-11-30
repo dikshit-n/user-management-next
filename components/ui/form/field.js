@@ -13,7 +13,7 @@ import {
   MaterialSelect,
   CustomNumberInput,
   CustomPhoneNumberInput,
-  CustomFileInput,
+  FileInput,
 } from "./components";
 import { CustomRadio } from "../custom-radio";
 import {
@@ -29,6 +29,7 @@ import {
   DateTimePicker,
   TimePicker,
   Checkbox,
+  FormHelperText,
 } from "../m-ui";
 
 export const Field = ({
@@ -258,30 +259,21 @@ export const Field = ({
       );
     case "file":
       return (
-        <TextField
-          {...rest}
-          // fullWidth
-          name={name}
-          error={error && touched}
-          value={value}
-          helperText={error || rest.helperText}
-          onChange={(file) => {
-            if (rest.onChange) rest.onChange(file);
-            formik.setFieldValue(name, file);
-          }}
-          InputProps={{
-            [`${addonPosition}Adornment`]: addon && (
-              <InputAdornment position={addonPosition}>
-                {addon.component}
-              </InputAdornment>
-            ),
-            // CUSTOM_NUMBER_FORMAT_PROPS
-            inputComponent: (fileInputProps) => (
-              <CustomFileInput {...fileInputProps} {...specialInputProps} />
-            ),
-            ...rest.InputProps,
-          }}
-        />
+        <>
+          <FormLabel error={error && touched}>{rest.label}</FormLabel>
+          <FileInput
+            {...rest}
+            {...fileInputProps}
+            {...specialInputProps}
+            name={name}
+            value={value}
+            onChange={(file) => {
+              if (rest.onChange) rest.onChange(file);
+              formik.setFieldValue(name, file);
+            }}
+          />
+          {error && touched && <FormHelperText>{error}</FormHelperText>}
+        </>
       );
     case "array":
       return children.length > 0 ? (

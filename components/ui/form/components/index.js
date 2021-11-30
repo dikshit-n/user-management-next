@@ -1,5 +1,4 @@
 export * from "./checkbox-multiple";
-export * from "./custom-file-input";
 export * from "./custom-number-input";
 export * from "./custom-phone-number-input";
 export * from "./file-input";
